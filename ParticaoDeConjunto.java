@@ -1,6 +1,10 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+
+/* TODO
+ * REFATORAR
+ * FAZER CLASSE MAIN (TESTES)
+ * FAZER README
+ */
 
 public class ParticaoDeConjunto {
   // PARA NUMEROS INTEIROS POSITIVOS
@@ -15,20 +19,18 @@ public class ParticaoDeConjunto {
     ParticaoDeConjunto pc = new ParticaoDeConjunto();
     
     System.out.println(pc.podeParticionar_BottomUp(conjunto));
-    for (Integer[] arr: pc.particionar()) {
-      System.out.println(Arrays.toString(arr));
-    }
+    ArrayList<Integer>[] subconjuntos = pc.particionar();
+    System.out.println(subconjuntos[0]);
+    System.out.println(subconjuntos[1]);
 
   }
 
-  private boolean podeParticionar_BottomUp(int[] conjunto) {
+  public boolean podeParticionar_BottomUp(int[] conjunto) {
     int somaConjunto, metadeSoma, somaMenor;
     this.conjunto = conjunto;
-
-    somaConjunto = 0;
-    for (int elem: conjunto) somaConjunto += elem;
-
+    somaConjunto = getSomaConjunto();
     memo = null;
+
     if (somaConjunto % 2 != 0) return false;
 
     metadeSoma = somaConjunto / 2;
@@ -54,47 +56,44 @@ public class ParticaoDeConjunto {
     return memo[memo.length - 1][memo[0].length - 1];
   }
 
-  public Integer[][] particionar() {
-    HashSet<Integer> indicesSubconjunto;
-    ArrayList<Integer> subconjunto1, subconjunto2;
+  @SuppressWarnings("unchecked")
+  public ArrayList<Integer>[] particionar() {
     int soma, indice;
+    boolean podeParticionar, celulaAtual, celulaAcima;
+    ArrayList<Integer>[] subconjuntos = new ArrayList[2];
+    subconjuntos[0] = new ArrayList<>();
+    subconjuntos[1] = new ArrayList<>();
+    podeParticionar = memo[memo.length - 1][memo[0].length - 1];
 
-    if (memo == null || memo[memo.length - 1][memo[0].length - 1] == false) {
+    if (memo == null || podeParticionar == false) {
       return null;
     }
 
-    indicesSubconjunto = new HashSet<>();
-    subconjunto1 = new ArrayList<>();
-    subconjunto2 = new ArrayList<>();
     indice = conjunto.length;
-    soma = 0;
-    for (int elem: conjunto) soma += elem;
-    soma /= 2;
+    soma = getSomaConjunto() / 2;
 
-    while (soma > 0) {
-      if (memo[indice][soma] == true && memo[indice - 1][soma] == true) {
-        indice--;
-        continue;
+    while (indice > 0) {
+      celulaAtual = memo[indice][soma];
+      celulaAcima = memo[indice - 1][soma];
+
+      if (soma <= 0 || (celulaAtual == true && celulaAcima == true)) {
+        subconjuntos[1].add(conjunto[indice - 1]);
+      } else {
+        subconjuntos[0].add(conjunto[indice - 1]);
+        soma -= conjunto[indice - 1];
       }
-
-      indicesSubconjunto.add(indice - 1);
-      soma -= conjunto[indice - 1];
       indice--;
     }
 
-    for (int i = 0; i < conjunto.length; i++) {
-      if (indicesSubconjunto.contains(i)) {
-        subconjunto1.add(conjunto[i]);
-      } else {
-        subconjunto2.add(conjunto[i]);
-      }
-    }
+    return subconjuntos;
+  }
 
-    Integer[][] s = {
-      subconjunto1.toArray(new Integer[0]),
-      subconjunto2.toArray(new Integer[0])
-    };
-    return s;
+  private int getSomaConjunto() {
+    int soma = 0;
+    for (int elem: conjunto) {
+      soma += elem;
+    }
+    return soma;
   }
 
 }
