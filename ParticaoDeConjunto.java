@@ -1,10 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/* TODO
- * FAZER README
- */
-
 public class ParticaoDeConjunto {
   private int[] conjunto;
   private boolean[][] memo;
@@ -40,7 +36,7 @@ public class ParticaoDeConjunto {
     return memo[memo.length - 1][memo[0].length - 1];
   }
 
-  @SuppressWarnings("unchecked")
+  // @SuppressWarnings("unchecked")
   public List<Integer>[] particionar() {
     List<Integer>[] subconjuntos;
     boolean celulaAtual, celulaAcima;
